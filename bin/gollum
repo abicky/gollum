@@ -172,6 +172,7 @@ if options['irb']
     exit 0
   end
 else
+  require 'bundler'
   require 'gollum/app'
   Precious::App.set(:gollum_path, gollum_path)
   Precious::App.set(:wiki_options, wiki_options)
@@ -187,7 +188,9 @@ else
   base_path = wiki_options[:base_path]
 
   if wiki_options[:base_path].nil?
-    Precious::App.run!(options)
+    Precious::App.run!(options) do
+      Bundler.require(:default, Sinatra::Application.environment)
+    end
   else
     require 'rack'
 
@@ -209,6 +212,8 @@ else
       end
     end
     # Rack::Handler does not work with Ctrl + C. Use Rack::Server instead.
-    Rack::Server.new(:app => MapGollum.new(base_path), :Port => options['port'], :Host => options['bind']).start
+    Rack::Server.new(:app => MapGollum.new(base_path), :Port => options['port'], :Host => options['bind']).start do
+      Bundler.require(:default, Sinatra::Application.environment)
+    end
   end
 end
