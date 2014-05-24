@@ -264,7 +264,7 @@ module Precious
 
     get '/create/*' do
       wikip = wiki_page(params[:splat].first.gsub('+', '-'))
-      @name = wikip.name.to_url
+      @name = wikip.name
       @path = wikip.path
 
       page_dir = settings.wiki_options[:page_file_dir].to_s
@@ -286,7 +286,7 @@ module Precious
     end
 
     post '/create' do
-      name   = params[:page].to_url
+      name   = params[:page]
       path   = sanitize_empty_params(params[:path]) || ''
       format = params[:format].intern
       wiki   = wiki_new
@@ -297,7 +297,7 @@ module Precious
         wiki.write_page(name, format, params[:content], commit_message, path)
 
         page_dir = settings.wiki_options[:page_file_dir].to_s
-        redirect to("/#{clean_url(::File.join(page_dir, path, name))}")
+        redirect to("/#{clean_url(::File.join(page_dir, encodeURIComponent(path), encodeURIComponent(name)))}")
       rescue Gollum::DuplicatePageError => e
         @message = "Duplicate page: #{e.message}"
         mustache :error
@@ -358,7 +358,7 @@ module Precious
         redirect to("/history/#{@file}")
       else
         redirect to("/compare/%s/%s...%s" % [
-            @file,
+            encodeURIComponent(@file),
             @versions.last,
             @versions.first]
                  )
