@@ -38,7 +38,15 @@
       displayMath: [ ['$$','$$'], ['\\[','\\]'] ],
       processEscapes: true
     },
-    TeX: { extensions: ["autoload-all.js"] }});
+    TeX: {
+      extensions: ["autoload-all.js"],
+      Macros: {
+          bm: ["\\boldsymbol{#1}", 1],
+          argmax: ["\\mathop{\\rm arg\\,max}\\limits"],
+          argmin: ["\\mathop{\\rm arg\\,min}\\limits"]
+      }
+    }
+  });
   </script>
   <script>(function(d,j){
   j = d.createElement('script');
